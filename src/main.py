@@ -9,6 +9,7 @@ FPS = 60
 
 ASSET_DIR = "../assets"  
 
+# aset belum lengkap
 
 def main():
     pygame.init()
