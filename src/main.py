@@ -52,14 +52,14 @@ font = pygame.font.SysFont("Lato", 30)
 
 # Load images (same error handling)
 try:
-    cue_image = pygame.image.load("assets/cue.png").convert_alpha()
-    table_image = pygame.image.load("assets/table.png").convert_alpha()
+    cue_image = pygame.image.load("src/assets/cue.png").convert_alpha()
+    table_image = pygame.image.load("src/assets/table.png").convert_alpha()
     ball_images = []
     for i in range(1, 17):
-        ball_image = pygame.image.load(f"assets/ball_{i}.png").convert_alpha()
+        ball_image = pygame.image.load(f"src/assets/ball_{i}.png").convert_alpha()
         ball_images.append(ball_image)
 except FileNotFoundError:
-    print("Error: Gambar tidak ditemukan. Pastikan folder 'assets/' ada.")
+    print("Error: Gambar tidak ditemukan. Pastikan folder 'src/assets/' ada.")
     pygame.quit()
     sys.exit()
 
