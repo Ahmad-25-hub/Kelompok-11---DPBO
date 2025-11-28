@@ -1,6 +1,6 @@
-class Score:
-    def __init__(self):
-        self.points = 0
+class Skor:
+    def __init__(self, lives=3):
+        self.lives = lives
 
-    def add(self, amount=1):
-        self.points += amount
+    def lose_life(self):
+        self.lives -= 1

@@ -1,36 +1,24 @@
-import math
+import pymunk
 
+def create_ball(space, radius, pos):
+    body = pymunk.Body()
+    body.position = pos
+    shape = pymunk.Circle(body, radius)
 
-class Physics:
-    """
-    Minimal physics helper: currently only implements bounds collision with simple elastic reflection.
-    """
+    shape.mass = 5
+    shape.elasticity = 0.8
 
-    def __init__(self, screen_size):
-        self.width, self.height = screen_size
+    pivot = pymunk.PivotJoint(space.static_body, body, (0, 0), (0, 0))
+    pivot.max_bias = 0
+    pivot.max_force = 1000
 
-        self.margin = 40
+    space.add(body, shape, pivot)
+    return shape
 
-    def resolve_bounds(self, objects):
-        left = self.margin
-        right = self.width - self.margin
-        top = self.margin
-        bottom = self.height - self.margin
-
-        for o in objects:
-            if not hasattr(o, "x"):
-                continue
-
-
-            if o.x - o.radius < left:
-                o.x = left + o.radius
-                o.vx = -o.vx
-            if o.x + o.radius > right:
-                o.x = right - o.radius
-                o.vx = -o.vx
-            if o.y - o.radius < top:
-                o.y = top + o.radius
-                o.vy = -o.vy
-            if o.y + o.radius > bottom:
-                o.y = bottom - o.radius
-                o.vy = -o.vy
+def create_cushion(space, poly_dims, elasticity=0.8):
+    body = pymunk.Body(body_type=pymunk.Body.STATIC)
+    body.position = (0, 0)
+    shape = pymunk.Poly(body, poly_dims)
+    shape.elasticity = elasticity
+    space.add(body, shape)
+    return shape
