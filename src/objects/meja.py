@@ -1,6 +1,6 @@
 class Meja:
-    """Representasi meja. Saat ini hanya placeholder."""
+    def __init__(self, image):
+        self.image = image
 
-    def __init__(self, width=1000, height=500):
-        self.width = width
-        self.height = height
+    def draw(self, surface):
+        surface.blit(self.image, (0, 0))
