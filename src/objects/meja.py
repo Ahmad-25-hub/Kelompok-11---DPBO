@@ -1,6 +1,5 @@
-class Meja:
-    def __init__(self, image):
-        self.image = image
+import pygame
+from config import *
 
-    def draw(self, surface):
-        surface.blit(self.image, (0, 0))
+table_image_orig = pygame.image.load("assets/images/table.png").convert_alpha()
+table_image = pygame.transform.scale(table_image_orig, (TABLE_WIDTH, TABLE_HEIGHT))

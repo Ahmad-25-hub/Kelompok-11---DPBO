@@ -3,7 +3,7 @@ import pygame
 pygame.init()
 
 # --- FAKTOR SKALA ---
-SCALE = 0.6 
+SCALE = 0.7 
 
 # --- UKURAN MEJA & LAYAR ---
 TABLE_WIDTH = int(1200 * SCALE)
