@@ -1,59 +1,59 @@
-import math
 import pygame
-import pymunk
+from config import *
+from objects.objek_game import Button
 
-WHITE = (255,255,255)
-YELLOW = (255,255,0)
+# Load images
+try:
+    menu_bg_orig = pygame.image.load("assets/background_main_menu.png").convert()
+    menu_bg = pygame.transform.scale(menu_bg_orig, (SCREEN_WIDTH, SCREEN_HEIGHT))
+except:
+    menu_bg = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+    menu_bg.fill(BG)
 
-def draw_text(surface, text, font, color, x, y):
-    img = font.render(text, True, color)
-    surface.blit(img, (x, y))
+ball_images = []
+for i in range(1, 17):
+    ball_img_orig = pygame.image.load(f"assets/images/ball_{i}.png").convert_alpha()
+    ball_img_scaled = pygame.transform.scale(ball_img_orig, (int(36 * SCALE), int(36 * SCALE)))
+    ball_images.append(ball_img_scaled)
 
-def draw_projection_and_bounce(screen, space, cue_angle, cue_ball, dia):
-    """
-    Menggambar proyeksi garis tembakan + satu pantulan sesuai algoritme di main.py (file terbaru).
-    """
-    angle_rad = math.radians(cue_angle)
-    proj_vec_x = -math.cos(angle_rad)
-    proj_vec_y = math.sin(angle_rad)
+# Tombol Menu
+button_width = 300 * SCALE
+button_height = 70 * SCALE
+center_x = (SCREEN_WIDTH // 2) - (button_width // 2)
+start_y = (SCREEN_HEIGHT // 2) + (20 * SCALE)
 
-    start_pt = (cue_ball.body.position.x, cue_ball.body.position.y)
-    offset_dist = (dia / 2) + 2
-    ray_start = (start_pt[0] + proj_vec_x * offset_dist, start_pt[1] + proj_vec_y * offset_dist)
-    ray_end = (start_pt[0] + proj_vec_x * 1200, start_pt[1] + proj_vec_y * 1200)
+start_button = Button(center_x, start_y, button_width, button_height, "START GAME", large_font)
+exit_button = Button(center_x, start_y + button_height + (20 * SCALE), button_width, button_height, "EXIT", large_font)
 
-    query = space.segment_query_first(ray_start, ray_end, 1, pymunk.ShapeFilter())
+def draw_text(text, font, text_col, x, y):
+    img = font.render(text, True, text_col)
+    screen.blit(img, (x, y))
 
-    if query:
-        end_point = query.point
-        pygame.draw.line(screen, WHITE, start_pt, end_point, 2)
-        pygame.draw.circle(screen, WHITE, (int(end_point[0]), int(end_point[1])), 4)
+def draw_centered_text(text, font, text_col, y_offset=0):
+    img = font.render(text, True, text_col)
+    rect = img.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + y_offset))
+    screen.blit(img, rect)
 
-        hit_shape = query.shape
-        normal_x = query.normal.x
-        normal_y = query.normal.y
+def draw_main_menu(game_state_callback, exit_callback):
+    screen.blit(menu_bg, (0, 0))
+    
+    overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+    overlay.set_alpha(100)
+    overlay.fill(BLACK)
+    screen.blit(overlay, (0,0))
 
-        bounce_vec_x, bounce_vec_y = 0, 0
-        line_color = WHITE
+    title_text = "BILLIARD MASTER"
+    title_surf = title_font.render(title_text, True, WHITE)
+    shadow_surf = title_font.render(title_text, True, BLACK)
+    
+    title_rect = title_surf.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 - (120 * SCALE)))
+    screen.blit(shadow_surf, (title_rect.x + 4, title_rect.y + 4))
+    screen.blit(title_surf, title_rect)
 
-        if hit_shape.body.body_type == pymunk.Body.STATIC:
-            dot_product = (proj_vec_x * normal_x) + (proj_vec_y * normal_y)
-            bounce_vec_x = proj_vec_x - (2 * dot_product * normal_x)
-            bounce_vec_y = proj_vec_y - (2 * dot_product * normal_y)
-            line_color = (200, 200, 200)
-        else:
-            tangent_x_1, tangent_y_1 = -normal_y, normal_x
-            tangent_x_2, tangent_y_2 = normal_y, -normal_x
-            dot_product_1 = (proj_vec_x * tangent_x_1) + (proj_vec_y * tangent_y_1)
-            if dot_product_1 > 0:
-                bounce_vec_x, bounce_vec_y = tangent_x_1, tangent_y_1
-            else:
-                bounce_vec_x, bounce_vec_y = tangent_x_2, tangent_y_2
-            line_color = YELLOW
+    if start_button.draw(screen):
+        game_state_callback()
+    
+    if exit_button.draw(screen):
+        exit_callback()
 
-        bounce_start = (end_point[0] + bounce_vec_x * 2, end_point[1] + bounce_vec_y * 2)
-        bounce_len = 200
-        bounce_end = (bounce_start[0] + bounce_vec_x * bounce_len, bounce_start[1] + bounce_vec_y * bounce_len)
-        pygame.draw.line(screen, line_color, end_point, bounce_end, 2)
-    else:
-        pygame.draw.line(screen, WHITE, start_pt, ray_end, 2)
+    draw_centered_text("Press SPACE to Quick Start", small_font, GREY, y_offset=(250 * SCALE))
