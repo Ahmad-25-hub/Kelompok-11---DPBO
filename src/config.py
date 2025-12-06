@@ -35,6 +35,6 @@ small_font = pygame.font.SysFont("Lato", int(20 * SCALE))
 
 # Screen Setup (Dibuat di sini agar bisa diimport renderer)
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Pool Game - 2 Players (Improved UI)")
+pygame.display.set_caption("Pool Game - kelompok 11")
 clock = pygame.time.Clock()
 FPS = 120
