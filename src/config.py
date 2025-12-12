@@ -1,11 +1,10 @@
 import pygame
 
-pygame.init()
-
-# --- FAKTOR SKALA ---
+# --- KONFIGURASI UMUM ---
 SCALE = 0.7 
+FPS = 120
 
-# --- UKURAN MEJA & LAYAR ---
+# --- UKURAN ---
 TABLE_WIDTH = int(1200 * SCALE)
 TABLE_HEIGHT = int(678 * SCALE)
 MARGIN_X = int(150 * SCALE)
@@ -14,7 +13,11 @@ BOTTOM_PANEL = int(40 * SCALE)
 SCREEN_WIDTH = TABLE_WIDTH + (MARGIN_X * 2)
 SCREEN_HEIGHT = TABLE_HEIGHT + MARGIN_Y + BOTTOM_PANEL
 
-# Colours
+# --- UKURAN BOLA & POCKET ---
+DIA = int(36 * SCALE)
+POCKET_DIA = int(66 * SCALE)
+
+# --- WARNA ---
 BG = (50, 50, 50)
 UI_BG = (30, 30, 30)
 PANEL_BG = (40, 45, 50)
@@ -27,14 +30,15 @@ GREEN = (0, 255, 0)
 GREY = (150, 150, 150)
 BLACK = (0, 0, 0)
 
-# Fonts
-font = pygame.font.SysFont("Lato", int(26 * SCALE))
-large_font = pygame.font.SysFont("Lato", int(40 * SCALE), bold=True)
-title_font = pygame.font.SysFont("Lato", int(80 * SCALE), bold=True)
-small_font = pygame.font.SysFont("Lato", int(20 * SCALE))
+# --- FONT (Diinisialisasi nanti di main agar aman) ---
+font = None
+large_font = None
+title_font = None
+small_font = None
 
-# Screen Setup (Dibuat di sini agar bisa diimport renderer)
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Pool Game - kelompok 11")
-clock = pygame.time.Clock()
-FPS = 120
+def init_fonts():
+    global font, large_font, title_font, small_font
+    font = pygame.font.SysFont("Lato", int(26 * SCALE))
+    large_font = pygame.font.SysFont("Lato", int(40 * SCALE), bold=True)
+    title_font = pygame.font.SysFont("Lato", int(80 * SCALE), bold=True)
+    small_font = pygame.font.SysFont("Lato", int(20 * SCALE))
