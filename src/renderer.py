@@ -1,59 +1,59 @@
 import pygame
 from config import *
-from objects.objek_game import Button
 
-# Load images
-try:
-    menu_bg_orig = pygame.image.load("assets/background_main_menu.png").convert()
-    menu_bg = pygame.transform.scale(menu_bg_orig, (SCREEN_WIDTH, SCREEN_HEIGHT))
-except:
-    menu_bg = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-    menu_bg.fill(BG)
-
-ball_images = []
-for i in range(1, 17):
-    ball_img_orig = pygame.image.load(f"assets/images/ball_{i}.png").convert_alpha()
-    ball_img_scaled = pygame.transform.scale(ball_img_orig, (int(36 * SCALE), int(36 * SCALE)))
-    ball_images.append(ball_img_scaled)
-
-# Tombol Menu
-button_width = 300 * SCALE
-button_height = 70 * SCALE
-center_x = (SCREEN_WIDTH // 2) - (button_width // 2)
-start_y = (SCREEN_HEIGHT // 2) + (20 * SCALE)
-
-start_button = Button(center_x, start_y, button_width, button_height, "START GAME", large_font)
-exit_button = Button(center_x, start_y + button_height + (20 * SCALE), button_width, button_height, "EXIT", large_font)
-
-def draw_text(text, font, text_col, x, y):
+def draw_text(surface, text, font, text_col, x, y):
     img = font.render(text, True, text_col)
-    screen.blit(img, (x, y))
+    surface.blit(img, (x, y))
 
-def draw_centered_text(text, font, text_col, y_offset=0):
+def draw_centered_text(surface, text, font, text_col, y_offset=0):
     img = font.render(text, True, text_col)
     rect = img.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + y_offset))
-    screen.blit(img, rect)
+    surface.blit(img, rect)
 
-def draw_main_menu(game_state_callback, exit_callback):
-    screen.blit(menu_bg, (0, 0))
-    
-    overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-    overlay.set_alpha(100)
-    overlay.fill(BLACK)
-    screen.blit(overlay, (0,0))
+class Button():
+    def __init__(self, x, y, width, height, text, font):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.text = text
+        self.font = font
+        self.clicked = False
 
-    title_text = "BILLIARD MASTER"
-    title_surf = title_font.render(title_text, True, WHITE)
-    shadow_surf = title_font.render(title_text, True, BLACK)
-    
-    title_rect = title_surf.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 - (120 * SCALE)))
-    screen.blit(shadow_surf, (title_rect.x + 4, title_rect.y + 4))
-    screen.blit(title_surf, title_rect)
+    def draw(self, surface):
+        action = False
+        pos = pygame.mouse.get_pos()
+        
+        # Warna default
+        top_color = PANEL_BG
+        text_col = WHITE
+        border_col = WHITE
+        shadow_offset = 5
 
-    if start_button.draw(screen):
-        game_state_callback()
-    
-    if exit_button.draw(screen):
-        exit_callback()
+        # Cek Hover
+        if self.rect.collidepoint(pos):
+            top_color = (60, 65, 70) 
+            border_col = ACTIVE_BORDER 
+            text_col = ACTIVE_BORDER
+            
+            # Cek Klik
+            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+                self.clicked = True
+                action = True
+        
+        if pygame.mouse.get_pressed()[0] == 0:
+            self.clicked = False
 
-    draw_centered_text("Press SPACE to Quick Start", small_font, GREY, y_offset=(250 * SCALE))
+        # Gambar Bayangan (Shadow)
+        shadow_rect = pygame.Rect(self.rect.x + shadow_offset, self.rect.y + shadow_offset, self.rect.width, self.rect.height)
+        pygame.draw.rect(surface, (20, 20, 20), shadow_rect, border_radius=15)
+
+        # Gambar Kotak Utama
+        pygame.draw.rect(surface, top_color, self.rect, border_radius=15)
+        
+        # Gambar Border
+        pygame.draw.rect(surface, border_col, self.rect, 3, border_radius=15)
+
+        # Gambar Teks
+        text_img = self.font.render(self.text, True, text_col)
+        text_rect = text_img.get_rect(center=self.rect.center)
+        surface.blit(text_img, text_rect)
+
+        return action
